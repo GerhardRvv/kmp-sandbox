@@ -4,15 +4,12 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.navigation.NavHostController
@@ -20,7 +17,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dependencies.MyViewModel
+import kmpsandboxdemo.composeapp.generated.resources.Res
+import kmpsandboxdemo.composeapp.generated.resources.ic_battery
+import kmpsandboxdemo.composeapp.generated.resources.ic_censor
+import kmpsandboxdemo.composeapp.generated.resources.ic_clock
+import kmpsandboxdemo.composeapp.generated.resources.ic_counter
+import kmpsandboxdemo.composeapp.generated.resources.ic_settings
 import networking.InsultCensorClient
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import ui.CensorTextScreen
@@ -41,10 +45,19 @@ fun App(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("App Navigation") })
+            TopAppBar(
+                title = { Text("App Navigation") },
+                backgroundColor = Color.White,
+                contentColor = Color.Black
+            )
         },
         bottomBar = {
-            BottomNavigationBar(navController)
+            Surface(
+                color = Color.LightGray,
+                elevation = 8.dp
+            ) {
+                BottomNavigationBar(navController)
+            }
         }
     ) {
         NavigationHost(
@@ -76,33 +89,36 @@ fun NavigationHost(
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
-    BottomNavigation {
+    BottomNavigation(
+        backgroundColor = Color.White,
+        contentColor = Color.Black
+    ) {
         BottomNavigationItem(
-            icon = { Icon(Icons.Default.Settings, contentDescription = null) },
+            icon = { Icon(painterResource(resource = Res.drawable.ic_clock), contentDescription = null) },
             label = { Text("Cities") },
             selected = false,
             onClick = { navController.navigate("cities") }
         )
         BottomNavigationItem(
-            icon = { Icon(Icons.Default.Person, contentDescription = null) },
+            icon = { Icon(painterResource(resource = Res.drawable.ic_settings), contentDescription = null) },
             label = { Text("Permissions") },
             selected = false,
             onClick = { navController.navigate("permissions") }
         )
         BottomNavigationItem(
-            icon = { Icon(Icons.Default.Add, contentDescription = null) },
+            icon = { Icon(painterResource(resource = Res.drawable.ic_counter), contentDescription = null) },
             label = { Text("Counter") },
             selected = false,
             onClick = { navController.navigate("counter") }
         )
         BottomNavigationItem(
-            icon = { Icon(Icons.Default.Face, contentDescription = null) },
+            icon = { Icon(painterResource(resource = Res.drawable.ic_battery), contentDescription = null) },
             label = { Text("Greeting") },
             selected = false,
             onClick = { navController.navigate("greeting") }
         )
         BottomNavigationItem(
-            icon = { Icon(Icons.Default.Warning, contentDescription = null) },
+            icon = { Icon(painterResource(resource = Res.drawable.ic_censor), contentDescription = null) },
             label = { Text("Censor") },
             selected = false,
             onClick = { navController.navigate("censor") }
