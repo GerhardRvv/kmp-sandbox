@@ -41,6 +41,10 @@
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need acess to your mic</string>
+	<key>NSContactsUsageDescription</key>
+	<string>We need access to your contacts</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to your camera</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
