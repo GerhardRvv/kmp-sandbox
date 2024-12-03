@@ -3,9 +3,7 @@ package org.gerhard.kmp_sandbox_demo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.tooling.preview.Preview
 import createDataStore
 import io.ktor.client.engine.okhttp.OkHttp
 import networking.InsultCensorClient
@@ -25,16 +23,13 @@ class MainActivity : ComponentActivity() {
                 batteryManager = remember {
                     BatteryManager(applicationContext)
                 },
+                cameraManager = remember {
+                    CameraManager(this)
+                },
                 prefs = remember {
                     createDataStore(applicationContext)
                 }
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun AppAndroidPreview() {
-//    App()
 }

@@ -20,6 +20,7 @@ fun MainViewController() = ComposeUIViewController(
             )
         },
         batteryManager = BatteryManager(),
+        cameraManager = CameraManager(),
         prefs = createDataStore()
     )
 }

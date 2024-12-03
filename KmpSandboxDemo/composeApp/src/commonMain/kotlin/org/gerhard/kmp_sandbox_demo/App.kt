@@ -1,5 +1,6 @@
 package org.gerhard.kmp_sandbox_demo
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -8,6 +9,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
@@ -37,16 +39,18 @@ import ui.PermissionsScreen
 @Composable
 fun App(
     batteryManager: BatteryManager,
+    cameraManager: CameraManager,
     client: InsultCensorClient,
     prefs: DataStore<Preferences>,
-    viewModel: MyViewModel = koinViewModel()
+    myViewModel: MyViewModel = koinViewModel(),
 ) {
     val navController = rememberNavController()
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("App Navigation") },
+                title = { Text(screenTitleForRoute(currentRoute)) },
                 backgroundColor = Color.White,
                 contentColor = Color.Black
             )
@@ -56,16 +60,18 @@ fun App(
                 color = Color.LightGray,
                 elevation = 8.dp
             ) {
-                BottomNavigationBar(navController)
+                BottomNavigationBar(navController, currentRoute)
             }
         }
-    ) {
+    ) { innerPadding ->
         NavigationHost(
             navController = navController,
             batteryManager = batteryManager,
+            cameraManager = cameraManager,
             client = client,
             prefs = prefs,
-            viewModel = viewModel
+            myViewModel = myViewModel,
+            modifier = Modifier.padding(innerPadding)
         )
     }
 }
@@ -76,53 +82,52 @@ fun NavigationHost(
     batteryManager: BatteryManager,
     client: InsultCensorClient,
     prefs: DataStore<Preferences>,
-    viewModel: MyViewModel
+    myViewModel: MyViewModel,
+    modifier: Modifier = Modifier,
+    cameraManager: CameraManager,
 ) {
-    NavHost(navController, startDestination = "cities") {
+    NavHost(navController, startDestination = "cities", modifier = modifier) {
         composable("cities") { CitiesScreen() }
-        composable("permissions") { PermissionsScreen() }
+        composable("permissions") { PermissionsScreen(cameraManager) }
         composable("counter") { CounterScreen(prefs) }
-        composable("greeting") { GreetingScreen(batteryManager, viewModel) }
+        composable("greeting") { GreetingScreen(batteryManager, myViewModel) }
         composable("censor") { CensorTextScreen(client) }
     }
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
+fun BottomNavigationBar(navController: NavHostController, currentRoute: String?) {
     BottomNavigation(
         backgroundColor = Color.White,
         contentColor = Color.Black
     ) {
-        BottomNavigationItem(
-            icon = { Icon(painterResource(resource = Res.drawable.ic_clock), contentDescription = null) },
-            label = { Text("Cities") },
-            selected = false,
-            onClick = { navController.navigate("cities") }
+        val items = listOf(
+            "cities" to Res.drawable.ic_clock,
+            "permissions" to Res.drawable.ic_settings,
+            "counter" to Res.drawable.ic_counter,
+            "greeting" to Res.drawable.ic_battery,
+            "censor" to Res.drawable.ic_censor
         )
-        BottomNavigationItem(
-            icon = { Icon(painterResource(resource = Res.drawable.ic_settings), contentDescription = null) },
-            label = { Text("Permissions") },
-            selected = false,
-            onClick = { navController.navigate("permissions") }
-        )
-        BottomNavigationItem(
-            icon = { Icon(painterResource(resource = Res.drawable.ic_counter), contentDescription = null) },
-            label = { Text("Counter") },
-            selected = false,
-            onClick = { navController.navigate("counter") }
-        )
-        BottomNavigationItem(
-            icon = { Icon(painterResource(resource = Res.drawable.ic_battery), contentDescription = null) },
-            label = { Text("Greeting") },
-            selected = false,
-            onClick = { navController.navigate("greeting") }
-        )
-        BottomNavigationItem(
-            icon = { Icon(painterResource(resource = Res.drawable.ic_censor), contentDescription = null) },
-            label = { Text("Censor") },
-            selected = false,
-            onClick = { navController.navigate("censor") }
-        )
+        items.forEach { (route, iconRes) ->
+            BottomNavigationItem(
+                icon = { Icon(painterResource(resource = iconRes), contentDescription = null) },
+                label = { Text(route.capitalize()) },
+                selected = currentRoute == route,
+                onClick = { navController.navigate(route) }
+            )
+        }
     }
 }
+
+fun screenTitleForRoute(route: String?): String {
+    return when (route) {
+        "cities" -> "Cities"
+        "permissions" -> "Permissions"
+        "counter" -> "Counter"
+        "greeting" -> "Greeting"
+        "censor" -> "Censor"
+        else -> "App Navigation"
+    }
+}
+
 

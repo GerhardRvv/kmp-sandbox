@@ -9,6 +9,5 @@ actual class BatteryManager {
         val batteryLevel = UIDevice.currentDevice.batteryLevel
 
         return (batteryLevel * 100).roundToInt()
-
     }
 }
